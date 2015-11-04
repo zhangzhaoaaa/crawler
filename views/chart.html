@@ -2,9 +2,74 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title><%=title%></title>
+    <script src="javascripts/Chart.js"></script>
 </head>
 <body>
+<div>
+    <header>
+        <h1>针对ITEYE的个人博客信息统计</h1>
 
+        <h2>截止目前总访问量为<%=totalCount%></h2>
+    </header>
+    <div class="width:900px;height:450px;">
+        <canvas width="900" height="450" id="browserTopTen"></canvas>
+    </div>
+    <div>
+        <canvas id="activeTopTen"></canvas>
+    </div>
+</div>
+<script>
+    var labels = '<%- JSON.stringify(labels) %>';
+    var labelsArray = JSON.parse(labels);
+    var data = '<%- JSON.stringify(data) %>';
+    var dataArray = JSON.parse(data);
+    var lineChartData = {
+        labels: labelsArray,
+        datasets: [
+            {
+                label: "访问量最高的前十博文",
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(151,187,205,1)",
+                data: dataArray
+            }
+        ]
+    };
+    var ctx = document.getElementById("browserTopTen").getContext("2d");
+    window.myLine = new Chart(ctx).Line(lineChartData, {
+        responsive: true
+    });
+    var diffCount = '<%- JSON.stringify(diffTopTen) %>';
+    var diffCountArray = JSON.parse(diffCount);
+    var labelsArray2 = diffCountArray.map(function(curr,index,arr){
+        return curr.blog_title;
+    });
+    var dataArray2 = diffCountArray.map(function(curr,index,arr){
+        return curr.diffCount;
+    });
+    var lineChartData2 = {
+        labels: labelsArray2,
+        datasets: [
+            {
+                label: "访问量最高的前十博文2",
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(151,187,205,1)",
+                data: dataArray2
+            }
+        ]
+    };
+    var ctx2 = document.getElementById("activeTopTen").getContext("2d");
+    window.myLine2 = new Chart(ctx2).Line(lineChartData2, {
+        responsive: true
+    });
+</script>
 </body>
 </html>

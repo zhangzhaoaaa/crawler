@@ -2,9 +2,21 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title><%=title%></title>
 </head>
 <body>
-
+    <div id="main">
+        <header>
+            <h1>针对ITEYE的个人博客信息统计</h1>
+        </header>
+        <section>
+            <a href="/getData" class="button" >开始统计</a>
+            <a href="/getDataFromCache" class="button" >缓存统计</a>
+        </section>
+        <div id="waiting" class="dialog">
+            这是弹出框
+        </div>
+    </div>
+    <script src="http://libs.useso.com/js/jquery/1.10.0/jquery.min.js"></script>
 </body>
 </html>

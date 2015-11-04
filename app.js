@@ -2,14 +2,28 @@ var express = require('express');
 var cheerio = require('cheerio');
 var superagent = require('superagent');
 var http = require('http');
+var path           = require( 'path' );
+var static         = require( 'serve-static' );
 var app = express();
 require( './db' );
+
+
+app.engine( 'html', require('ejs').renderFile);
+app.set( 'views', path.join( __dirname, 'views' ));
+app.set( 'view engine', 'html' );
+app.use( static( path.join( __dirname, 'public' )));
 var mongoose    = require( 'mongoose' );
 var Blog_records = mongoose.model('Blog_records');
-app.use('/getChart',function(req, res, next){
-
+app.use('/index',function(req, res, next){
+    res.render( 'index', {
+        title : '爬虫抓取者'
+    });
 });
-app.use('/getData', function (req, res, next) {
+app.get('/',function(req,res){
+    return res.redirect('/index');
+});
+
+app.use('/getData/', function (req, res, next) {
     /*http.get("http://zhangzhaoaaa.iteye.com", function(response) {
         var str = "";
         response.on('data', function (chunk) {
@@ -29,6 +43,7 @@ app.use('/getData', function (req, res, next) {
         }
         var $ = cheerio.load(sres.text);
         var items = [];
+        var totalCount = parseInt(($('#blog_actions ul li').eq(0).text()).match(/[\d]+/)[0]);
         var totalPages = $('.pagination a').eq(3).text();
         $('.blog_main').each(function(idx,element){
           var $element = $(element);
@@ -140,8 +155,24 @@ app.use('/getData', function (req, res, next) {
                 console.log(cur.title,cur.browserCount);
             });
             var retArr = items.slice(0,10);
-          res.send(retArr);
-            clearTimeout(insertTimeout);
+            var labels = retArr.map(function(cur,index,arr){
+                return cur.title;
+            });
+            var data = retArr.map(function(cur,index,arr){
+                return cur.browserCount;
+            });
+            var query = Blog_records.find();
+            query.limit(10).sort({diffCount:-1}).exec(function(err,records){
+                console.log(records);
+                console.log(records[0].blog_title);
+                res.render( 'chart', {
+                    title : '爬虫抓取者',
+                    labels:labels,
+                    data:data,
+                    totalCount:totalCount,
+                    diffTopTen:records
+                });
+            });
         },60000);
       });
 });
