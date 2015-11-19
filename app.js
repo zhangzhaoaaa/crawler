@@ -16,7 +16,7 @@ var mongoose    = require( 'mongoose' );
 var Blog_records = mongoose.model('Blog_records');
 app.use('/index',function(req, res, next){
     res.render( 'index', {
-        title : '爬虫抓取者'
+        title : '爬虫抓取者123'
     });
 });
 app.get('/',function(req,res){
